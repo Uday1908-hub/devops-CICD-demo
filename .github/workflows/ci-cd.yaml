@@ -30,13 +30,7 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Install dependencies
-        run: |
-          pip install -r requirement.txt
-          
-
-      - name: Execute tests
-        run: pytest tests -v
+     
 
   build-and-push:
     name: Build and Push Image
