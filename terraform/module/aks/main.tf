@@ -30,9 +30,7 @@ resource "azurerm_role_assignment" "acr_pull" {
 }
 
 
-output "aks_cluster_name" {
-  value = azurerm_kubernetes_cluster.this.name
-}
+
 
 
 variable "aks_cluster_name" {
