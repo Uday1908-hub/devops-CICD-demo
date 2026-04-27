@@ -14,6 +14,7 @@ module "acr" {
 module "aks" {
   source              = "./modules/aks"
   aks_cluster_name    = var.aks_cluster_name
+  dns_prefix          = var.dns_prefix
   resource_group_name = module.resource_group.resource_group_name
   location            = module.resource_group.location
   node_count          = var.node_count

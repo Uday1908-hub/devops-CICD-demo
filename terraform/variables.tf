@@ -30,3 +30,9 @@ variable "environment" {
   type        = string
   default     = "dev"
 }
+
+
+variable "dns_prefix" {
+  type = string
+}
+

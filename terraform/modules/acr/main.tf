@@ -5,8 +5,3 @@ resource "azurerm_container_registry" "this" {
   sku                 = "Basic"
   admin_enabled       = true
 }
-
-
-
-
-

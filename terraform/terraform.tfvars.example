@@ -1,7 +1,7 @@
-resource_group_name = "rg-cloudforge-platform"
+resource_group_name = "rg-devopsUSECASE"
 location            = "eastus"
-acr_name            = "acrcloudforgehub"
-aks_cluster_name    = "aks-cloudforge-platform"
+acr_name            = "devopsacr001"
+aks_cluster_name    = "aks01"
 node_count          = 1
 vm_size             = "Standard_B2s_v2"
 environment         = "dev"

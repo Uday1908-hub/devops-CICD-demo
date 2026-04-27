@@ -2,7 +2,7 @@ resource "azurerm_kubernetes_cluster" "this" {
   name                = var.aks_cluster_name
   location            = var.location
   resource_group_name = var.resource_group_name
-  dns_prefix          = var.aks_cluster_name
+  dns_prefix          = var.dns_prefix
 
   default_node_pool {
     name       = "system"
@@ -28,7 +28,3 @@ resource "azurerm_role_assignment" "acr_pull" {
   scope                            = var.acr_id
   skip_service_principal_aad_check = true
 }
-
-
-
-

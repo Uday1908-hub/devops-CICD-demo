@@ -1,5 +1,8 @@
-
 variable "aks_cluster_name" {
+  type = string
+}
+
+variable "dns_prefix" {
   type = string
 }
 
@@ -22,5 +25,6 @@ variable "environment" {
 variable "acr_id" {
   type = string
 }
+
 
 
