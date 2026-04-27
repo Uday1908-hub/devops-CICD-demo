@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: cloudforge-api
+  namespace: default
+  labels:
+    app: cloudforge-api
+spec:
+  type: LoadBalancer
+  selector:
+    app: cloudforge-api
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8000
