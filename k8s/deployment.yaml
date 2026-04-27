@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cloudforge-api
+  namespace: default
+  labels:
+    app: cloudforge-api
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: cloudforge-api
+  template:
+    metadata:
+      labels:
+        app: cloudforge-api
+    spec:
+      containers:
+        - name: cloudforge-api
+          image: PLACEHOLDER_ACR/cloudforge-api:PLACEHOLDER_TAG
+          ports:
+            - containerPort: 8000
+          env:
+            - name: APP_NAME
+              value: "cloudforge-api"
+            - name: APP_VERSION
+              value: "PLACEHOLDER_TAG"
+            - name: ENVIRONMENT
+              value: "production"
+            - name: TEAM_NAME
+              value: "Platform Reliability"
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 10
+            periodSeconds: 15
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "250m"
+              memory: "256Mi"
