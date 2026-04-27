@@ -110,5 +110,6 @@ jobs:
       - name: Verify rollout
         run: kubectl rollout status deployment/cloudforge-api --timeout=180s
 
+
       - name: Show service endpoint
         run: kubectl get svc cloudforge-api
