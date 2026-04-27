@@ -1,0 +1,41 @@
+resource_group_name = "rg-cloudforge-platform"
+location            = "eastus"
+acr_name            = "acrcloudforgehub"
+aks_cluster_name    = "aks-cloudforge-platform"
+node_count          = 1
+vm_size             = "Standard_B2s_v2"
+environment         = "dev"
+
+variable.tf
+variable "resource_group_name" {
+  description = "Azure resource group name"
+  type        = string
+}
+
+variable "location" {
+  description = "Azure region"
+  type        = string
+  default     = "eastus"
+}
+
+variable "acr_name" {
+  description = "Azure Container Registry name (globally unique, lowercase alphanumeric)"
+  type        = string
+}
+
+variable "aks_cluster_name" {
+  description = "AKS cluster name"
+  type        = string
+}
+
+variable "node_count" {
+  description = "Node count for AKS default node pool"
+  type        = number
+  default     = 1
+}
+
+variable "environment" {
+  description = "Environment tag"
+  type        = string
+  default     = "dev"
+}
