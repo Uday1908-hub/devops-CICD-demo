@@ -1,0 +1,15 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+crash.log
+terraform/terraform.tfvars
+terraform.tfvars
+
+# Local kube config exports
+kubeconfig*
