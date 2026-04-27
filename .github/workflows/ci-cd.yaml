@@ -1,0 +1,114 @@
+name: CloudNative API CI/CD
+
+on:
+  push:
+    branches:
+      - cloud-native-ci-cd
+  workflow_dispatch:
+
+env:
+  IMAGE_NAME: cloudforge-api
+  ACR_LOGIN_SERVER: ${{ secrets.CLOUDNATIVE_ACR_LOGIN_SERVER || secrets.ACR_LOGIN_SERVER || vars.CLOUDNATIVE_ACR_LOGIN_SERVER || vars.ACR_LOGIN_SERVER }}
+  ACR_USERNAME: ${{ secrets.CLOUDNATIVE_ACR_USERNAME || secrets.ACR_USERNAME || vars.CLOUDNATIVE_ACR_USERNAME || vars.ACR_USERNAME }}
+  ACR_PASSWORD: ${{ secrets.CLOUDNATIVE_ACR_PASSWORD || secrets.ACR_PASSWORD || vars.CLOUDNATIVE_ACR_PASSWORD || vars.ACR_PASSWORD }}
+  AKS_KUBECONFIG_B64: ${{ secrets.CLOUDNATIVE_KUBE_CONFIG || vars.CLOUDNATIVE_KUBE_CONFIG || secrets.CLOUDNATIVE_AKS_KUBE_CONFIG || secrets.AKS_KUBE_CONFIG || secrets.CLOUDNATIVE_AKS_KUBECONFIG || secrets.AKS_KUBECONFIG || vars.CLOUDNATIVE_AKS_KUBE_CONFIG || vars.AKS_KUBE_CONFIG || vars.CLOUDNATIVE_AKS_KUBECONFIG || vars.AKS_KUBECONFIG }}
+
+jobs:
+  test:
+    name: Run API Tests
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: app
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          pip install -r requirements-dev.txt
+
+      - name: Execute tests
+        run: pytest tests -v
+
+  build-and-push:
+    name: Build and Push Image
+    runs-on: ubuntu-latest
+    needs: test
+    outputs:
+      image_tag: ${{ steps.meta.outputs.tag }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Validate registry secrets
+        run: |
+          test -n "${{ env.ACR_LOGIN_SERVER }}" || (echo "Missing ACR login server secret" && exit 1)
+          test -n "${{ env.ACR_USERNAME }}" || (echo "Missing ACR username secret" && exit 1)
+          test -n "${{ env.ACR_PASSWORD }}" || (echo "Missing ACR password secret" && exit 1)
+
+      - name: Derive image tag
+        id: meta
+        run: echo "tag=${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
+
+      - name: Login to ACR
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.ACR_LOGIN_SERVER }}
+          username: ${{ env.ACR_USERNAME }}
+          password: ${{ env.ACR_PASSWORD }}
+
+      - name: Build and push
+        run: |
+          docker build -t ${{ env.ACR_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.tag }} ./app
+          docker push ${{ env.ACR_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.tag }}
+          docker tag ${{ env.ACR_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.tag }} ${{ env.ACR_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:latest
+          docker push ${{ env.ACR_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:latest
+
+  deploy:
+    name: Deploy to AKS
+    runs-on: ubuntu-latest
+    needs: build-and-push
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Validate kubeconfig secret
+        run: |
+          test -n "${{ env.AKS_KUBECONFIG_B64 }}" || (echo "Missing kubeconfig value. Checked: CLOUDNATIVE_KUBE_CONFIG, CLOUDNATIVE_AKS_KUBE_CONFIG, AKS_KUBE_CONFIG, CLOUDNATIVE_AKS_KUBECONFIG, AKS_KUBECONFIG (Secrets/Variables)." && exit 1)
+
+      - name: Configure kubeconfig from secret
+        run: |
+          mkdir -p ~/.kube
+          printf '%s' "${{ env.AKS_KUBECONFIG_B64 }}" | base64 --decode > ~/.kube/config
+          chmod 600 ~/.kube/config
+
+      - name: Validate kubectl context
+        run: |
+          kubectl config current-context
+          kubectl get nodes --request-timeout=30s
+
+      - name: Set deployment image tag
+        run: |
+          sed -i "s|PLACEHOLDER_ACR|${{ env.ACR_LOGIN_SERVER }}|g" k8s/deployment.yaml
+          sed -i "s|PLACEHOLDER_TAG|${{ needs.build-and-push.outputs.image_tag }}|g" k8s/deployment.yaml
+
+      - name: Apply manifests
+        run: |
+          kubectl apply -f k8s/deployment.yaml
+          kubectl apply -f k8s/service.yaml
+
+      - name: Verify rollout
+        run: kubectl rollout status deployment/cloudforge-api --timeout=180s
+
+      - name: Show service endpoint
+        run: kubectl get svc cloudforge-api
