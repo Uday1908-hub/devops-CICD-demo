@@ -33,15 +33,11 @@ jobs:
       - name: Install dependencies
         run: |
           pip install -r requirement.txt
-<<<<<<< HEAD
-          
-=======
->>>>>>> f57891aec17c68db40dbca44e7f6a92c893a4113
+
 
           
       - name: Execute tests
         run: pytest tests -v
-
      
 
   build-and-push:
