@@ -84,21 +84,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Validate kubeconfig secret
-        run: |
-          test -n "${{ env.AKS_KUBECONFIG_B64 }}" || (echo "Missing kubeconfig value. Checked: CLOUDNATIVE_KUBE_CONFIG, CLOUDNATIVE_AKS_KUBE_CONFIG, AKS_KUBE_CONFIG, CLOUDNATIVE_AKS_KUBECONFIG, AKS_KUBECONFIG (Secrets/Variables)." && exit 1)
-
-      - name: Configure kubeconfig from secret
-        run: |
-          mkdir -p ~/.kube
-          printf '%s' "${{ env.AKS_KUBECONFIG_B64 }}" | base64 --decode > ~/.kube/config
-          chmod 600 ~/.kube/config
-
-      - name: Validate kubectl context
-        run: |
-          kubectl config current-context
-          kubectl get nodes --request-timeout=30s
-
+     
       - name: Set deployment image tag
         run: |
           sed -i "s|PLACEHOLDER_ACR|${{ env.ACR_LOGIN_SERVER }}|g" k8s/deployment.yaml
