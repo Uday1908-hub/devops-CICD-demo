@@ -110,7 +110,7 @@ jobs:
           kubectl apply -f k8s/service.yaml
 
       - name: Verify rollout
-        run: kubectl rollout status deployment/usecase-api --timeout=180s
+        run: kubectl rollout status deployment/cloudnative-api --timeout=180s
 
 
       - name: Show service endpoint
