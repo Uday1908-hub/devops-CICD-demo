@@ -3,11 +3,11 @@ name: Devops UseCase
 on:
   push:
     branches:
-      - use-case-ci-cd
+      - cloud-native-ci-cd
   workflow_dispatch:
 
 env:
-  IMAGE_NAME: usecase-api
+  IMAGE_NAME: cloudnative-api
   ACR_LOGIN_SERVER: ${{ secrets.CLOUDNATIVE_ACR_LOGIN_SERVER || secrets.ACR_LOGIN_SERVER || vars.CLOUDNATIVE_ACR_LOGIN_SERVER || vars.ACR_LOGIN_SERVER }}
   ACR_USERNAME: ${{ secrets.CLOUDNATIVE_ACR_USERNAME || secrets.ACR_USERNAME || vars.CLOUDNATIVE_ACR_USERNAME || vars.ACR_USERNAME }}
   ACR_PASSWORD: ${{ secrets.CLOUDNATIVE_ACR_PASSWORD || secrets.ACR_PASSWORD || vars.CLOUDNATIVE_ACR_PASSWORD || vars.ACR_PASSWORD }}
@@ -114,4 +114,4 @@ jobs:
 
 
       - name: Show service endpoint
-        run: kubectl get svc usecase-api
+        run: kubectl get svc cloudnative-api
