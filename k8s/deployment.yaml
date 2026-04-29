@@ -1,23 +1,23 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: usecase-api
+  name: cloudnative-api
   namespace: default
   labels:
-    app: usecase-api
+    app: cloudnative-api
 spec:
   replicas: 2
   selector:
     matchLabels:
-      app: usecase-api
+      app: cloudnative-api
   template:
     metadata:
       labels:
-        app: usecase-api
+        app: cloudnative-api
     spec:
       containers:
-        - name: usecase-api
-          image: PLACEHOLDER_ACR/usecase-api:PLACEHOLDER_TAG
+        - name: cloudnative-api
+          image: PLACEHOLDER_ACR/cloudnative-api:PLACEHOLDER_TAG
           ports:
             - containerPort: 8000
           env:
