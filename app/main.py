@@ -2,12 +2,12 @@ from fastapi import FastAPI
 import os
 from datetime import datetime, timezone
 
-app = FastAPI(title="CloudForge API")
+app = FastAPI(title="USECASE API")
 
 APP_VERSION = os.getenv("APP_VERSION", "1.0.0")
 ENVIRONMENT = os.getenv("ENVIRONMENT", "development")
 TEAM_NAME = os.getenv("TEAM_NAME", "Platform Reliability")
-APP_NAME = os.getenv("APP_NAME", "cloudforge-api")
+APP_NAME = os.getenv("APP_NAME", "usecase-api")
 
 
 @app.get("/health")
