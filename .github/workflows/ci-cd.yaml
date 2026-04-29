@@ -37,7 +37,7 @@ jobs:
 
           
       - name: Execute api_tests
-        run: pytest tests -v
+        run: pytest api_tests -v
      
 
   build-and-push:
