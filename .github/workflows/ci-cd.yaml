@@ -1,13 +1,13 @@
-name: CloudNative API CI/CD
+name: Devops UseCase 
 
 on:
   push:
     branches:
-      - cloud-native-ci-cd
+      - use-case-ci-cd
   workflow_dispatch:
 
 env:
-  IMAGE_NAME: cloudforge-api
+  IMAGE_NAME: usecase-api
   ACR_LOGIN_SERVER: ${{ secrets.CLOUDNATIVE_ACR_LOGIN_SERVER || secrets.ACR_LOGIN_SERVER || vars.CLOUDNATIVE_ACR_LOGIN_SERVER || vars.ACR_LOGIN_SERVER }}
   ACR_USERNAME: ${{ secrets.CLOUDNATIVE_ACR_USERNAME || secrets.ACR_USERNAME || vars.CLOUDNATIVE_ACR_USERNAME || vars.ACR_USERNAME }}
   ACR_PASSWORD: ${{ secrets.CLOUDNATIVE_ACR_PASSWORD || secrets.ACR_PASSWORD || vars.CLOUDNATIVE_ACR_PASSWORD || vars.ACR_PASSWORD }}
@@ -110,8 +110,8 @@ jobs:
           kubectl apply -f k8s/service.yaml
 
       - name: Verify rollout
-        run: kubectl rollout status deployment/cloudforge-api --timeout=180s
+        run: kubectl rollout status deployment/usecase-api --timeout=180s
 
 
       - name: Show service endpoint
-        run: kubectl get svc cloudforge-api
+        run: kubectl get svc usecase-api
