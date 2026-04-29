@@ -1,4 +1,4 @@
-name: UseCase-AZ
+name: CICD Pipeline
 
 on:
   push:
