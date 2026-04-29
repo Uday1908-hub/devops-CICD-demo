@@ -30,4 +30,4 @@ def test_info_returns_expected_keys():
 
 def test_info_app_name():
     response = client.get("/info")
-    assert response.json()["app"] == "cloudforge-api"
+    assert response.json()["app"] == "usecase-api"
