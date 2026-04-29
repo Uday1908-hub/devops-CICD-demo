@@ -1,9 +1,9 @@
-name: Devops UseCase 
+name: UseCase 
 
 on:
   push:
     branches:
-      - cloud-native-ci-cd
+      - usecase-ci-cd
   workflow_dispatch:
 
 env:
