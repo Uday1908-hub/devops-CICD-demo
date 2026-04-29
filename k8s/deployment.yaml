@@ -1,28 +1,28 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: cloudforge-api
+  name: usecase-api
   namespace: default
   labels:
-    app: cloudforge-api
+    app: usecase-api
 spec:
   replicas: 2
   selector:
     matchLabels:
-      app: cloudforge-api
+      app: usecase-api
   template:
     metadata:
       labels:
-        app: cloudforge-api
+        app: usecase-api
     spec:
       containers:
-        - name: cloudforge-api
-          image: PLACEHOLDER_ACR/cloudforge-api:PLACEHOLDER_TAG
+        - name: usecase-api
+          image: PLACEHOLDER_ACR/usecase-api:PLACEHOLDER_TAG
           ports:
             - containerPort: 8000
           env:
             - name: APP_NAME
-              value: "cloudforge-api"
+              value: "usecase-api"
             - name: APP_VERSION
               value: "PLACEHOLDER_TAG"
             - name: ENVIRONMENT
