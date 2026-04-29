@@ -1,14 +1,14 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: usecase-api
+  name: cloudnative-api
   namespace: default
   labels:
-    app: usecase-api
+    app: cloudnative-api
 spec:
   type: LoadBalancer
   selector:
-    app: usecase-api
+    app: cloudnative-api
   ports:
     - protocol: TCP
       port: 80
