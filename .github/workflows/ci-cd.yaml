@@ -15,7 +15,7 @@ env:
 
 jobs:
   test:
-    name: Run API Tests
+    name: Run APIs
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -76,7 +76,7 @@ jobs:
           docker push ${{ env.ACR_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:latest
 
   deploy:
-    name: Deploy to AKS
+    name: Deploy 
     runs-on: ubuntu-latest
     needs: build-and-push
 
