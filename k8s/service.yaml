@@ -1,14 +1,14 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: cloudforge-api
+  name: usecase-api
   namespace: default
   labels:
-    app: cloudforge-api
+    app: usecase-api
 spec:
   type: LoadBalancer
   selector:
-    app: cloudforge-api
+    app: usecase-api
   ports:
     - protocol: TCP
       port: 80
