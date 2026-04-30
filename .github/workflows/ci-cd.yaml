@@ -8,9 +8,9 @@ on:
 
 env:
   IMAGE_NAME: cloudnative-api
-  ACR_LOGIN_SERVER: ${{ secrets.CLOUDNATIVE_ACR_LOGIN_SERVER || secrets.ACR_LOGIN_SERVER || vars.CLOUDNATIVE_ACR_LOGIN_SERVER || vars.ACR_LOGIN_SERVER }}
-  ACR_USERNAME: ${{ secrets.CLOUDNATIVE_ACR_USERNAME || secrets.ACR_USERNAME || vars.CLOUDNATIVE_ACR_USERNAME || vars.ACR_USERNAME }}
-  ACR_PASSWORD: ${{ secrets.CLOUDNATIVE_ACR_PASSWORD || secrets.ACR_PASSWORD || vars.CLOUDNATIVE_ACR_PASSWORD || vars.ACR_PASSWORD }}
+  U_ACR_LOGIN_SERVER: ${{ secrets.CLOUDNATIVE_ACR_LOGIN_SERVER || secrets.ACR_LOGIN_SERVER || vars.CLOUDNATIVE_ACR_LOGIN_SERVER || vars.ACR_LOGIN_SERVER }}
+  U_ACR_USERNAME: ${{ secrets.CLOUDNATIVE_ACR_USERNAME || secrets.ACR_USERNAME || vars.CLOUDNATIVE_ACR_USERNAME || vars.ACR_USERNAME }}
+  U_ACR_PASSWORD: ${{ secrets.CLOUDNATIVE_ACR_PASSWORD || secrets.ACR_PASSWORD || vars.CLOUDNATIVE_ACR_PASSWORD || vars.ACR_PASSWORD }}
   AKS_KUBECONFIG_B64: ${{ secrets.CLOUDNATIVE_KUBE_CONFIG || vars.CLOUDNATIVE_KUBE_CONFIG || secrets.CLOUDNATIVE_AKS_KUBE_CONFIG || secrets.AKS_KUBE_CONFIG || secrets.CLOUDNATIVE_AKS_KUBECONFIG || secrets.AKS_KUBECONFIG || vars.CLOUDNATIVE_AKS_KUBE_CONFIG || vars.AKS_KUBE_CONFIG || vars.CLOUDNATIVE_AKS_KUBECONFIG || vars.AKS_KUBECONFIG }}
 
 jobs:
@@ -53,9 +53,9 @@ jobs:
 
       - name: Validate registry secrets
         run: |
-          test -n "${{ env.ACR_LOGIN_SERVER }}" || (echo "Missing ACR login server secret" && exit 1)
-          test -n "${{ env.ACR_USERNAME }}" || (echo "Missing ACR username secret" && exit 1)
-          test -n "${{ env.ACR_PASSWORD }}" || (echo "Missing ACR password secret" && exit 1)
+          test -n "${{ env.U_ACR_LOGIN_SERVER }}" || (echo "Missing ACR login server secret" && exit 1)
+          test -n "${{ env.U_ACR_USERNAME }}" || (echo "Missing ACR username secret" && exit 1)
+          test -n "${{ env.U_ACR_PASSWORD }}" || (echo "Missing ACR password secret" && exit 1)
 
       - name: Derive image tag
         id: meta
@@ -64,16 +64,16 @@ jobs:
       - name: Login to ACR
         uses: docker/login-action@v3
         with:
-          registry: ${{ env.ACR_LOGIN_SERVER }}
-          username: ${{ env.ACR_USERNAME }}
-          password: ${{ env.ACR_PASSWORD }}
+          registry: ${{ env.U_ACR_LOGIN_SERVER }}
+          username: ${{ env.U_ACR_USERNAME }}
+          password: ${{ env.U_ACR_PASSWORD }}
 
       - name: Build and push
         run: |
-          docker build -t ${{ env.ACR_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.tag }} ./app
-          docker push ${{ env.ACR_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.tag }}
-          docker tag ${{ env.ACR_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.tag }} ${{ env.ACR_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:latest
-          docker push ${{ env.ACR_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:latest
+          docker build -t ${{ env.U_ACR_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.tag }} ./app
+          docker push ${{ env.U_ACR_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.tag }}
+          docker tag ${{ env.U_ACR_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.tag }} ${{ env.U_ACR_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:latest
+          docker push ${{ env.U_ACR_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:latest
 
   deploy:
     name: Deploy 
@@ -101,7 +101,7 @@ jobs:
 
       - name: Set deployment image tag
         run: |
-          sed -i "s|PLACEHOLDER_ACR|${{ env.ACR_LOGIN_SERVER }}|g" k8s/deployment.yaml
+          sed -i "s|PLACEHOLDER_ACR|${{ env.U_ACR_LOGIN_SERVER }}|g" k8s/deployment.yaml
           sed -i "s|PLACEHOLDER_TAG|${{ needs.build-and-push.outputs.image_tag }}|g" k8s/deployment.yaml
 
       - name: Apply manifests
